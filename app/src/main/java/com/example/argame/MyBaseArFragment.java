@@ -72,6 +72,10 @@ public abstract class MyBaseArFragment extends Fragment
         void onTapPlane(HitResult hitResult, Plane plane, MotionEvent motionEvent);
     }
 
+    public interface OnFlingListener {
+        void onFling(float velocityX, float velocityY);
+    }
+
     private static final int RC_PERMISSIONS = 1010;
     private boolean installRequested;
     private boolean sessionInitializationFailed = false;
@@ -85,6 +89,7 @@ public abstract class MyBaseArFragment extends Fragment
     @Nullable private OnTapArPlaneListener onSingleTapArPlaneListener;
     @Nullable private OnTapArPlaneListener onDoubleTapArPlaneListener;
     @Nullable private OnTapArPlaneListener onLongPressArPlaneListener;
+    private OnFlingListener onFlingListener;
 
     @SuppressWarnings({"initialization"})
     private final ViewTreeObserver.OnWindowFocusChangeListener onFocusListener =
@@ -140,6 +145,10 @@ public abstract class MyBaseArFragment extends Fragment
         this.onLongPressArPlaneListener = onLongPressArPlaneListener;
     }
 
+    public void setOnFlingListener(OnFlingListener onFlingListener) {
+        this.onFlingListener = onFlingListener;
+    }
+
     @Override
     @SuppressWarnings({"initialization"})
     // Suppress @UnderInitialization warning.
@@ -182,6 +191,12 @@ public abstract class MyBaseArFragment extends Fragment
                             @Override
                             public void onLongPress(MotionEvent e) {
                                 MyBaseArFragment.this.onLongPress(e);
+                            }
+
+                            @Override
+                            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                                MyBaseArFragment.this.onFling(velocityX, velocityY);
+                                return true;
                             }
 
                             @Override
@@ -617,6 +632,14 @@ public abstract class MyBaseArFragment extends Fragment
                     }
                 }
             }
+        }
+    }
+
+    private void onFling(float velocityX, float velocityY) {
+        OnFlingListener onFlingListener = this.onFlingListener;
+
+        if (onFlingListener != null) {
+            onFlingListener.onFling(velocityX, velocityY);
         }
     }
 }
