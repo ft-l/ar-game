@@ -20,14 +20,11 @@ import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Node;
-import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
-import com.google.ar.sceneform.rendering.Color;
-import com.google.ar.sceneform.rendering.MaterialFactory;
 import com.google.ar.sceneform.rendering.ModelRenderable;
-import com.google.ar.sceneform.rendering.ShapeFactory;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -35,16 +32,18 @@ public class MainActivity extends AppCompatActivity {
     private static final double MIN_OPENGL_VERSION = 3.0;
 
     private static MyArFragment AR_FRAGMENT;
-    private ModelRenderable greenCubeRenderable;
-    private ModelRenderable blueCylinderRenderable;
+    private Quaternion initialCameraQuaternion = null;
+    private Plane firstPlane = null;
+
     private ModelRenderable treeRenderable;
 
-    private Plane firstPlane = null;
     private static Random random = new Random();
     private boolean targetsPlaced = false;
-    private Quaternion initialCameraQuaternion = null;
 
-    private PlayerBall ball;
+    private BoundsMarker marker1;
+    private BoundsMarker marker2;
+
+    private PlayerBall ball = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,19 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
         ArSceneView view = AR_FRAGMENT.getArSceneView();
 
-        Scene scene = view.getScene();
-
-        MaterialFactory.makeOpaqueWithColor(this, new Color(android.graphics.Color.GREEN))
-                .thenAccept(
-                        material -> {
-                            greenCubeRenderable =
-                                    ShapeFactory.makeCube(new Vector3(0.1f, 0.1f, 0.1f), new Vector3(0.0f, 0.0f, 0.0f), material); });
-
-//        MaterialFactory.makeOpaqueWithColor(this, new Color(android.graphics.Color.BLUE))
-//                .thenAccept(
-//                        material -> {
-//                            blueCylinderRenderable =
-//                                    ShapeFactory.makeCylinder(0.05f, 0.1f, new Vector3(0, 0.15f, 0), material); });
+        // Scene scene = view.getScene();
 
         ModelRenderable.builder()
                 .setSource(this, Uri.parse("tree01.sfb"))
@@ -92,6 +79,17 @@ public class MainActivity extends AppCompatActivity {
 //                    Log.i(TAG, "motionEvent: " + motionEvent.toString());
                     ball = new PlayerBall(hitResult, AR_FRAGMENT, this, 0.1f, greenCubeRenderable);
                 });
+
+        AR_FRAGMENT.setOnLongPressArPlaneListener(
+                (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
+                    if (marker1 == null) {
+                        marker1 = new BoundsMarker(hitResult, AR_FRAGMENT, this);
+                        firstPlane = plane;
+                    } else if (marker2 == null) {
+                        marker2 = new BoundsMarker(hitResult, AR_FRAGMENT, this);
+                    }
+                }
+        );
 
         AR_FRAGMENT.setOnFlingListener(
                 (float velocityX, float velocityY) -> {
