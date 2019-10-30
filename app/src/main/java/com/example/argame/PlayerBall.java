@@ -26,13 +26,16 @@ public class PlayerBall {
 
     private AnchorNode anchorNode;
     private Node ball;
-    private Renderable model;
+    private Renderable ballModel;
+
+    private Renderable cubeModel;
+    private int rotations = 0;
 
     private float radius;
 
     private Vector3 velocity = new Vector3();
 
-    public PlayerBall(HitResult hitResult, MyArFragment parentFragment, Context context, float radius, Renderable outsideRenderable) {
+    public PlayerBall(HitResult hitResult, MyArFragment parentFragment, Context context, float radius) {
 
         this.parentFragment = parentFragment;
         this.radius = radius;
@@ -49,15 +52,20 @@ public class PlayerBall {
         MaterialFactory.makeOpaqueWithColor(context, new Color(android.graphics.Color.RED))
             .thenAccept(
                 material -> {
-                    model = ShapeFactory.makeSphere(radius, new Vector3(0.0f, 0.0f, 0.0f), material);
-                    playerBall.setRenderable(model);
+                    ballModel = ShapeFactory.makeSphere(radius, new Vector3(0.0f, 0.0f, 0.0f), material);
+                    playerBall.setRenderable(ballModel);
                 }
             );
 
-        Node stuckCube = new Node();
-        stuckCube.setParent(playerBall);
-        stuckCube.setLocalPosition(new Vector3(0.3f,0,0));
-        stuckCube.setRenderable(outsideRenderable);
+        MaterialFactory.makeOpaqueWithColor(context, new Color(android.graphics.Color.GREEN))
+            .thenAccept(
+                material -> cubeModel = ShapeFactory.makeCube(new Vector3(0.1f,0.1f,0.1f), new Vector3(0,0,0), material)
+            );
+
+//        Node stuckCube = new Node();
+//        stuckCube.setParent(playerBall);
+//        stuckCube.setLocalPosition(new Vector3(0.3f,0,0));
+//        stuckCube.setRenderable(outsideRenderable);
 
         // andy.getTranslationController().setAllowedPlaneTypes(EnumSet.complementOf(andy.getTranslationController().getAllowedPlaneTypes()));
         // andy.setCollisionShape(new Sphere(0.05f));
@@ -95,6 +103,21 @@ public class PlayerBall {
         Log.i(TAG, "update called");
         Log.i(TAG, "previousAnchor pose: " + previousAnchor.getPose());
 
+        for (Node node: parentFragment.getArSceneView().getScene().overlapTestAll(ball)) {
+            if (!node.getParent().equals(ball)) {
+                Vector3 relativePosition = Quaternion.rotateVector(ball.getWorldRotation().inverted(),
+                                                        Vector3.subtract(node.getWorldPosition(),ball.getWorldPosition()));
+                Quaternion relativeRotation = Quaternion.multiply(ball.getWorldRotation().inverted(),
+                                                        node.getWorldRotation());
+                node.setParent(ball);
+                node.setLocalPosition(relativePosition);
+                node.setLocalRotation(relativeRotation);
+            }
+
+//            Log.i(TAG, "this node is overlapping: " + node);
+//            Log.i(TAG, "ball world position: " + ball.getWorldPosition().toString());
+//            Log.i(TAG, "coll world position: " + node.getWorldPosition().toString());
+        }
 
         if (frame != null && frame.getCamera().getTrackingState() == TrackingState.TRACKING) {
             anchorNode.setAnchor(parentFragment.getArSceneView().getSession().createAnchor(
@@ -125,26 +148,20 @@ public class PlayerBall {
     private static float[] getBallRotatedRotation(Anchor anchor, Vector3 motion, float radius) {
         Quaternion currentRotation = new Quaternion(anchor.getPose().qx(), anchor.getPose().qy(), anchor.getPose().qz(), anchor.getPose().qw());
 
-        Log.i(TAG, "quaternion for rolling in direction: " + getRotationQuaternionForRollingInDirection(motion, radius));
-
         Quaternion newRotation = Quaternion.multiply(getRotationQuaternionForRollingInDirection(motion, radius), currentRotation);
 
-        float[] newRotationArray = {newRotation.x, newRotation.y, newRotation.z, newRotation.w};
-
-        return newRotationArray;
+        return new float[]{newRotation.x, newRotation.y, newRotation.z, newRotation.w};
     }
 
     private static Quaternion getRotationQuaternionForRollingInDirection(Vector3 motion, float radius) {
         if (motion.x != 0 && motion.y != 0) {
             double angleOfMotion = Math.atan2(-motion.y,-motion.x);
 
-            //TODO: calculate magnitude adjustment from radius
-
             double magnitude = Math.sqrt((motion.y*motion.y)+(motion.x*motion.x)) * radius * ROTATION_ADJUSTMENT;
 
-            Log.i(TAG, "x: " + -motion.x + " y: " + -motion.y);
-            Log.i(TAG, "angle of motion: " + (-angleOfMotion + (3*Math.PI/2)) * 180/Math.PI);
-            Log.i(TAG, "magnitude: " + magnitude);
+//            Log.i(TAG, "x: " + -motion.x + " y: " + -motion.y);
+//            Log.i(TAG, "angle of motion: " + (-angleOfMotion + (3*Math.PI/2)) * 180/Math.PI);
+//            Log.i(TAG, "magnitude: " + magnitude);
 
             return new Quaternion((float) (Math.sin(magnitude/2)*Math.cos(-angleOfMotion + (3*Math.PI/2))),
                     0,
@@ -213,5 +230,20 @@ public class PlayerBall {
                               (float)(s1*c2*c3 + c1*s2*s3),
                               (float)(c1*s2*c3 - s1*c2*s3),
                               (float)(c1c2*c3 - s1s2*s3));
+    }
+
+    public void placeCube() {
+        Quaternion rotation = new Quaternion(-0.70710678f,0,0,0.70710678f).normalized();
+        Vector3 point = new Vector3(0.25f,0,0.25f);
+        for (int i = 0; i < rotations; i++) {
+            point = Quaternion.rotateVector(rotation, point);
+        }
+
+        Node stuckCube = new Node();
+        stuckCube.setParent(ball);
+        stuckCube.setLocalPosition(point);
+        stuckCube.setRenderable(cubeModel);
+
+        rotations++;
     }
 }
