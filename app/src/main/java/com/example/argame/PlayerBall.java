@@ -28,7 +28,7 @@ public class PlayerBall {
     private Node ball;
     private Renderable ballModel;
 
-    private Renderable cubeModel;
+//    private Renderable cubeModel;
     private int rotations = 0;
 
     private float radius;
@@ -57,18 +57,10 @@ public class PlayerBall {
                 }
             );
 
-        MaterialFactory.makeOpaqueWithColor(context, new Color(android.graphics.Color.GREEN))
-            .thenAccept(
-                material -> cubeModel = ShapeFactory.makeCube(new Vector3(0.1f,0.1f,0.1f), new Vector3(0,0,0), material)
-            );
-
-//        Node stuckCube = new Node();
-//        stuckCube.setParent(playerBall);
-//        stuckCube.setLocalPosition(new Vector3(0.3f,0,0));
-//        stuckCube.setRenderable(outsideRenderable);
-
-        // andy.getTranslationController().setAllowedPlaneTypes(EnumSet.complementOf(andy.getTranslationController().getAllowedPlaneTypes()));
-        // andy.setCollisionShape(new Sphere(0.05f));
+//        MaterialFactory.makeOpaqueWithColor(context, new Color(android.graphics.Color.GREEN))
+//            .thenAccept(
+//                material -> cubeModel = ShapeFactory.makeCube(new Vector3(0.1f,0.1f,0.1f), new Vector3(0,0,0), material)
+//            );
 
         this.anchorNode = anchorNode;
         ball = playerBall;
@@ -99,9 +91,6 @@ public class PlayerBall {
         } catch (CameraNotAvailableException e) {
             Log.e(TAG, e.getLocalizedMessage());
         }
-
-        Log.i(TAG, "update called");
-        Log.i(TAG, "previousAnchor pose: " + previousAnchor.getPose());
 
         for (Node node: parentFragment.getArSceneView().getScene().overlapTestAll(ball)) {
             if (!node.getParent().equals(ball)) {
@@ -172,78 +161,18 @@ public class PlayerBall {
         }
     }
 
-    private static Quaternion getRotatedQuaternionByEulerAngles(Quaternion quaternion, float x, float y, float z) {
-
-        quaternion.normalize();
-
-        float[] eulerAngles = quaternionToEulerAngles(quaternion);
-
-//        eulerAngles[0] += (y * ROTATION_ADJUSTMENT);
-        eulerAngles[1] += (x * ROTATION_ADJUSTMENT);
-//        eulerAngles[2] += (z * ROTATION_ADJUSTMENT);
-
-        Log.i(TAG, "heading: " + eulerAngles[0]);
-        Log.i(TAG, "attitude: " + eulerAngles[1]);
-        Log.i(TAG, "bank: " + eulerAngles[2]);
-
-        return eulerAnglesToQuaternion(eulerAngles);
-    }
-
-    private static float[] quaternionToEulerAngles(Quaternion quaternion) {
-        float[] angles = new float[3];
-        double sqw = quaternion.w*quaternion.w;
-        double sqx = quaternion.x*quaternion.x;
-        double sqy = quaternion.y*quaternion.y;
-        double sqz = quaternion.z*quaternion.z;
-        double unit = sqx + sqy + sqz + sqw; // if normalised is one, otherwise is correction factor
-        double test = quaternion.x*quaternion.y + quaternion.z*quaternion.w;
-        Log.i(TAG, "xy+wz: " + test);
-        if (test > 0.49999999999999*unit) { // singularity at north pole
-            angles[0] = (float) (2 * Math.atan2(quaternion.x,quaternion.w));    // heading
-            angles[1] = (float) Math.PI/2;                                      // attitude
-            angles[2] = 0f;                                                     // bank
-            return angles;
-        }
-        if (test < -0.49999999999999*unit) { // singularity at south pole
-            angles[0] = (float) (-2 * Math.atan2(quaternion.x,quaternion.w));   // heading
-            angles[1] = (float) -Math.PI/2;                                     // attitude
-            angles[2] = 0f;                                                     // bank
-            return angles;
-        }
-        angles[0] = (float) Math.atan2(2*quaternion.y*quaternion.w-2*quaternion.x*quaternion.z , sqx - sqy - sqz + sqw);    // heading
-        angles[1] = (float) Math.asin(2*test/unit);                                                                         // attitude
-        angles[2] = (float) Math.atan2(2*quaternion.x*quaternion.w-2*quaternion.y*quaternion.z , -sqx + sqy - sqz + sqw);   // bank
-        return angles;
-    }
-
-    private static Quaternion eulerAnglesToQuaternion(float[] angles) {
-        // Assuming the angles are in radians.
-        double c1 = Math.cos(angles[0]/2);
-        double s1 = Math.sin(angles[0]/2);
-        double c2 = Math.cos(angles[1]/2);
-        double s2 = Math.sin(angles[1]/2);
-        double c3 = Math.cos(angles[2]/2);
-        double s3 = Math.sin(angles[2]/2);
-        double c1c2 = c1*c2;
-        double s1s2 = s1*s2;
-        return new Quaternion((float)(c1c2*s3 + s1s2*c3),
-                              (float)(s1*c2*c3 + c1*s2*s3),
-                              (float)(c1*s2*c3 - s1*c2*s3),
-                              (float)(c1c2*c3 - s1s2*s3));
-    }
-
-    public void placeCube() {
-        Quaternion rotation = new Quaternion(-0.70710678f,0,0,0.70710678f).normalized();
-        Vector3 point = new Vector3(0.25f,0,0.25f);
-        for (int i = 0; i < rotations; i++) {
-            point = Quaternion.rotateVector(rotation, point);
-        }
-
-        Node stuckCube = new Node();
-        stuckCube.setParent(ball);
-        stuckCube.setLocalPosition(point);
-        stuckCube.setRenderable(cubeModel);
-
-        rotations++;
-    }
+//    public void placeCube() {
+//        Quaternion rotation = new Quaternion(-0.70710678f,0,0,0.70710678f).normalized();
+//        Vector3 point = new Vector3(0.25f,0,0.25f);
+//        for (int i = 0; i < rotations; i++) {
+//            point = Quaternion.rotateVector(rotation, point);
+//        }
+//
+//        Node stuckCube = new Node();
+//        stuckCube.setParent(ball);
+//        stuckCube.setLocalPosition(point);
+//        stuckCube.setRenderable(cubeModel);
+//
+//        rotations++;
+//    }
 }
