@@ -67,17 +67,20 @@ public class MainActivity extends AppCompatActivity {
                 .thenAccept(renderable -> treeRenderable = renderable)
                 .exceptionally(
                         throwable -> {
-                            Log.e(TAG, "Unable to load Renderable.", throwable);
+                            Log.e(TAG, "Unable to load Renderable", throwable);
                             return null;
                 });
 
         AR_FRAGMENT.setOnSingleTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
-//                    Log.i(TAG, "hit");
-//                    Log.i(TAG, "hitResult: " + hitResult.toString());
-//                    Log.i(TAG, "plane: " + plane.toString());
-//                    Log.i(TAG, "motionEvent: " + motionEvent.toString());
-                    ball = new PlayerBall(hitResult, AR_FRAGMENT, this, 0.1f, greenCubeRenderable);
+                    if (ball == null) {
+                        ball = new PlayerBall(hitResult, AR_FRAGMENT, this, 0.03f);
+                        Log.i(TAG, "plane polygon: " + plane.getPolygon());
+                        int numOfRenderablesToPlace = random.nextInt(5);
+                        for (int i = 0; i < numOfRenderablesToPlace; i++) {
+                            placeRenderableInRandomPosition(plane, treeRenderable, AR_FRAGMENT);
+                        }
+                    }
                 });
 
         AR_FRAGMENT.setOnLongPressArPlaneListener(
@@ -93,10 +96,12 @@ public class MainActivity extends AppCompatActivity {
 
         AR_FRAGMENT.setOnFlingListener(
                 (float velocityX, float velocityY) -> {
-                    ball.setVelocity(rotateVectorByRadian(new Vector3(velocityX/100000,velocityY/100000,0),
-                                     getVerticalRotation(
-                                             initialCameraQuaternion,
-                                             AR_FRAGMENT.getArSceneView().getScene().getCamera().getWorldRotation())));
+                    if (ball != null) {
+                        ball.setVelocity(rotateVectorByRadian(new Vector3(velocityX/100000,velocityY/100000,0),
+                                getVerticalRotation(
+                                        initialCameraQuaternion,
+                                        AR_FRAGMENT.getArSceneView().getScene().getCamera().getWorldRotation())));
+                    }
                 }
         );
 
@@ -153,12 +158,16 @@ public class MainActivity extends AppCompatActivity {
     private void onFrame(FrameTime frameTime) {
         if (ball != null) {
             ball.update();
+        }
 
-//            if (!arFragment.getArSceneView().getScene().overlapTestAll(targetNode).isEmpty()) {
-//                for (Node collidingNode: arFragment.getArSceneView().getScene().overlapTestAll(targetNode)) {
-//                    Log.i(TAG, "colliding node: " + collidingNode.toString());
-//                }
-//            }
+        if (marker1 != null) {
+            marker1.resetRotation();
+            Log.i(TAG, "marker world position: " + Arrays.toString(marker1.getPosition()));
+            Log.i(TAG, "plane center position: " + Arrays.toString(firstPlane.getCenterPose().getTranslation()));
+        }
+
+        if (marker2 != null) {
+            marker2.resetRotation();
         }
 
 //        if (arFragment.getArSceneView().getSession().getAllAnchors().size() >= 5 && !targetsPlaced) {
