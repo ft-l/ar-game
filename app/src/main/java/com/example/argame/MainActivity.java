@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                         marker1 = new BoundsMarker(hitResult, AR_FRAGMENT, this);
                         firstPlane = plane;
                     } else if (marker2 == null) {
-                        marker2 = new BoundsMarker(hitResult, AR_FRAGMENT, this);
+                        marker2 = new BoundsMarker(hitResult, AR_FRAGMENT, this, marker1);
                     }
                 }
         );
