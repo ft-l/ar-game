@@ -74,7 +74,18 @@ public class MainActivity extends AppCompatActivity {
         AR_FRAGMENT.setOnSingleTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
                     if (ball == null && marker1 != null && marker2 != null) {
-                        ball = new PlayerBall(hitResult, AR_FRAGMENT, this, 0.03f, new float[]{-1,1,-1,1});
+                        float[] bounds = {marker1.getPosition()[0], marker2.getPosition()[0], marker1.getPosition()[2], marker2.getPosition()[2]};
+                        if (bounds[0] > bounds[1]) {
+                            float x = bounds[1];
+                            bounds[1] = bounds[0];
+                            bounds[0] = x;
+                        }
+                        if (bounds[2] > bounds[3]) {
+                            float x = bounds[3];
+                            bounds[3] = bounds[2];
+                            bounds[2] = x;
+                        }
+                        ball = new PlayerBall(hitResult, AR_FRAGMENT, this, 0.03f, bounds);
                         Log.i(TAG, "plane polygon: " + plane.getPolygon());
                         int numOfRenderablesToPlace = random.nextInt(5);
                         for (int i = 0; i < numOfRenderablesToPlace; i++) {
@@ -159,13 +170,9 @@ public class MainActivity extends AppCompatActivity {
         if (ball != null) {
             ball.update();
         }
-
         if (marker1 != null) {
             marker1.resetRotation();
-            Log.i(TAG, "marker world position: " + Arrays.toString(marker1.getPosition()));
-            Log.i(TAG, "plane center position: " + Arrays.toString(firstPlane.getCenterPose().getTranslation()));
         }
-
         if (marker2 != null) {
             marker2.resetRotation();
         }
