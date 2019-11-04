@@ -20,7 +20,7 @@ import com.google.ar.sceneform.rendering.ShapeFactory;
 
 public class PlayerBall {
     private static final String TAG = PlayerBall.class.getSimpleName();
-    private static final float ROTATION_ADJUSTMENT = 50f;
+    private static final float ROTATION_ADJUSTMENT = 0.4f;
 
     private MyArFragment parentFragment;
 
@@ -160,7 +160,7 @@ public class PlayerBall {
         if (motion.x != 0 && motion.y != 0) {
             double angleOfMotion = Math.atan2(-motion.y,-motion.x);
 
-            double magnitude = Math.sqrt((motion.y*motion.y)+(motion.x*motion.x)) * radius * ROTATION_ADJUSTMENT;
+            double magnitude = Math.sqrt((motion.y*motion.y)+(motion.x*motion.x)) * ROTATION_ADJUSTMENT / radius;
 
 //            Log.i(TAG, "x: " + -motion.x + " y: " + -motion.y);
 //            Log.i(TAG, "angle of motion: " + (-angleOfMotion + (3*Math.PI/2)) * 180/Math.PI);
