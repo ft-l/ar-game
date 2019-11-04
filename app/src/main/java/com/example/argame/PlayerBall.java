@@ -28,6 +28,14 @@ public class PlayerBall {
     private Node ball;
     private Renderable ballModel;
 
+    /**
+     * bounds[0] = x min
+     * bounds[1] = x max
+     * bounds[0] = z min
+     * bounds[1] = z max
+     */
+    private float[] bounds;
+
 //    private Renderable cubeModel;
     private int rotations = 0;
 
@@ -35,8 +43,9 @@ public class PlayerBall {
 
     private Vector3 velocity = new Vector3();
 
-    public PlayerBall(HitResult hitResult, MyArFragment parentFragment, Context context, float radius) {
+    public PlayerBall(HitResult hitResult, MyArFragment parentFragment, Context context, float radius, float[] bounds) {
 
+        this.bounds = bounds;
         this.parentFragment = parentFragment;
         this.radius = radius;
 
@@ -108,13 +117,18 @@ public class PlayerBall {
 //            Log.i(TAG, "coll world position: " + node.getWorldPosition().toString());
         }
 
-        if (frame != null && frame.getCamera().getTrackingState() == TrackingState.TRACKING) {
+        float[] newPosition = getTranslatedPosition(previousAnchor, velocity);
+
+        if (frame != null && frame.getCamera().getTrackingState() == TrackingState.TRACKING &&
+                newPosition[0] > bounds[0] &&
+                newPosition[0] < bounds[1] &&
+                newPosition[2] > bounds[2] &&
+                newPosition[2] < bounds[3]) {
             anchorNode.setAnchor(parentFragment.getArSceneView().getSession().createAnchor(
                     new Pose(getTranslatedPosition(previousAnchor, velocity), getBallRotatedRotation(previousAnchor, velocity, radius))
             ));
+            previousAnchor.detach();
         }
-
-        previousAnchor.detach();
 
         velocity.x = velocity.x*0.95f;
         velocity.y = velocity.y*0.95f;

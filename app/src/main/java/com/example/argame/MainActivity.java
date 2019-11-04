@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
         AR_FRAGMENT.setOnSingleTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
-                    if (ball == null) {
-                        ball = new PlayerBall(hitResult, AR_FRAGMENT, this, 0.03f);
+                    if (ball == null && marker1 != null && marker2 != null) {
+                        ball = new PlayerBall(hitResult, AR_FRAGMENT, this, 0.03f, new float[]{-1,1,-1,1});
                         Log.i(TAG, "plane polygon: " + plane.getPolygon());
                         int numOfRenderablesToPlace = random.nextInt(5);
                         for (int i = 0; i < numOfRenderablesToPlace; i++) {
