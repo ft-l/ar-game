@@ -119,4 +119,8 @@ public class BoundsMarker {
             marker.setWorldRotation(parentMarker.marker.getWorldRotation());
         }
     }
+
+    public void destroy() {
+        marker.getParent().removeChild(marker);
+    }
 }

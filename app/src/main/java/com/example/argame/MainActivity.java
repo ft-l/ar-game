@@ -91,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
                         for (int i = 0; i < numOfRenderablesToPlace; i++) {
                             placeRenderableInRandomPosition(plane, treeRenderable, AR_FRAGMENT);
                         }
+                        marker1.destroy();
+                        marker2.destroy();
                     }
                 });
 
@@ -176,17 +178,6 @@ public class MainActivity extends AppCompatActivity {
         if (marker2 != null) {
             marker2.resetRotation();
         }
-
-//        if (arFragment.getArSceneView().getSession().getAllAnchors().size() >= 5 && !targetsPlaced) {
-//            for (Plane plane: arFragment.getArSceneView().getSession().getAllTrackables(Plane.class)) {
-//                // Log.i(TAG, "plane polygon: " + plane.getPolygon());
-//                int numOfRenderablesToPlace = random.nextInt(5);
-//                for (int i = 0; i < numOfRenderablesToPlace; i++) {
-//                    placeRenderableInRandomPosition(plane, treeRenderable, arFragment);
-//                }
-//            }
-//            targetsPlaced = true;
-//        }
     }
 
     public static double getVerticalRotation(Quaternion initialCameraQuaternion, Quaternion currentCameraQuaternion) {
