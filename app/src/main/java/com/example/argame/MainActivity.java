@@ -89,7 +89,9 @@ public class MainActivity extends AppCompatActivity {
                         Log.i(TAG, "plane polygon: " + plane.getPolygon());
                         int numOfRenderablesToPlace = random.nextInt(5);
                         for (int i = 0; i < numOfRenderablesToPlace; i++) {
-                            placeRenderableInRandomPosition(plane, treeRenderable, AR_FRAGMENT);
+                            placeRenderableInRandomPosition(plane, treeRenderable, AR_FRAGMENT, bounds);
+                            placeRenderableInRandomPosition(plane, atticFanRenderable, AR_FRAGMENT, bounds);
+                            placeRenderableInRandomPosition(plane, knifeRenderable, AR_FRAGMENT, bounds);
                         }
                         marker1.destroy();
                         marker2.destroy();
@@ -144,22 +146,16 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public static void placeRenderableInRandomPosition(Plane plane, ModelRenderable renderable, MyArFragment arFragment) {
-        float maxX = plane.getExtentX()*1.2f;
-        float maxZ = plane.getExtentZ()*1.2f;
+    public static void placeRenderableInRandomPosition(Plane plane, ModelRenderable renderable, MyArFragment arFragment, float[] bounds) {
+        float[] randomTranslation = {
+                bounds[0] + (random.nextFloat() * (bounds[1]-bounds[0])),
+                plane.getCenterPose().getTranslation()[1],
+                bounds[2] + (random.nextFloat() * (bounds[3]-bounds[2]))
+        };
 
-        float randomX = (random.nextFloat()*maxX) - plane.getExtentX()*0.6f;
-        float randomZ = (random.nextFloat()*maxZ) - plane.getExtentZ()*0.6f;
-
-        Pose pose = plane.getCenterPose();
-        float[] translation = pose.getTranslation();
-        float[] rotation = pose.getRotationQuaternion();
-
-        translation[0] += randomX;
-        translation[2] += randomZ;
-        pose = new Pose(translation, rotation);
-
-        Anchor anchor = arFragment.getArSceneView().getSession().createAnchor(pose);
+        Anchor anchor = arFragment.getArSceneView().getSession().createAnchor(
+                new Pose(randomTranslation, plane.getCenterPose().getRotationQuaternion())
+        );
 
         Node node = new Node();
         node.setRenderable(renderable);
