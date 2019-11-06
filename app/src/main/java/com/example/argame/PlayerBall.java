@@ -31,8 +31,8 @@ public class PlayerBall {
     /**
      * bounds[0] = x min
      * bounds[1] = x max
-     * bounds[0] = z min
-     * bounds[1] = z max
+     * bounds[2] = z min
+     * bounds[3] = z max
      */
     private float[] bounds;
 
