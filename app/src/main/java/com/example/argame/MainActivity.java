@@ -35,7 +35,15 @@ public class MainActivity extends AppCompatActivity {
     private Quaternion initialCameraQuaternion = null;
     private Plane firstPlane = null;
 
-    private ModelRenderable treeRenderable;
+    private String[] renderableSources = {
+            "tree01.sfb",
+            "Attic Fan 2.sfb",
+            "Knife_01.sfb",
+            "Coffee Cup_final.sfb",
+            "Paper Airplane.sfb",
+            "doughnut.sfb",
+    };
+    private ModelRenderable[] renderables = new ModelRenderable[renderableSources.length];
 
     private static Random random = new Random();
     private boolean targetsPlaced = false;
@@ -61,15 +69,20 @@ public class MainActivity extends AppCompatActivity {
 
         // Scene scene = view.getScene();
 
-        ModelRenderable.builder()
-                .setSource(this, Uri.parse("tree01.sfb"))
-                .build()
-                .thenAccept(renderable -> treeRenderable = renderable)
-                .exceptionally(
-                        throwable -> {
-                            Log.e(TAG, "Unable to load Renderable", throwable);
-                            return null;
-                });
+        for (int i = 0; i < renderables.length; i++) {
+            int finalI = i;
+            ModelRenderable.builder()
+                    .setSource(this, Uri.parse(renderableSources[i]))
+                    .build()
+                    .thenAccept(renderable ->  {
+                        renderables[finalI] = renderable;
+                    })
+                    .exceptionally(
+                            throwable -> {
+                                Log.e(TAG, "Unable to load Renderable", throwable);
+                                return null;
+                            });
+        }
 
         AR_FRAGMENT.setOnSingleTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
@@ -87,11 +100,9 @@ public class MainActivity extends AppCompatActivity {
                         }
                         ball = new PlayerBall(hitResult, AR_FRAGMENT, this, 0.03f, bounds);
                         Log.i(TAG, "plane polygon: " + plane.getPolygon());
-                        int numOfRenderablesToPlace = random.nextInt(5);
+                        int numOfRenderablesToPlace = random.nextInt(10) + 20;
                         for (int i = 0; i < numOfRenderablesToPlace; i++) {
-                            placeRenderableInRandomPosition(plane, treeRenderable, AR_FRAGMENT, bounds);
-                            placeRenderableInRandomPosition(plane, atticFanRenderable, AR_FRAGMENT, bounds);
-                            placeRenderableInRandomPosition(plane, knifeRenderable, AR_FRAGMENT, bounds);
+                            placeRenderableInRandomPosition(plane, renderables[random.nextInt(renderables.length)], AR_FRAGMENT, bounds);
                         }
                         marker1.destroy();
                         marker2.destroy();

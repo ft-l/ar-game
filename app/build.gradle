@@ -45,3 +45,28 @@ sceneform.asset('sampledata/tree01.obj',
         'default',
         'sampledata/tree01.sfa',
         'src/main/assets/tree01')
+
+sceneform.asset('sampledata/Attic Fan 2.obj',
+        'default',
+        'sampledata/Attic Fan 2.sfa',
+        'src/main/assets/Attic Fan 2')
+
+sceneform.asset('sampledata/Knife_01.obj',
+        'default',
+        'sampledata/Knife_01.sfa',
+        'src/main/assets/Knife_01')
+
+sceneform.asset('sampledata/Coffee Cup_final.obj',
+        'default',
+        'sampledata/Coffee Cup_final.sfa',
+        'src/main/assets/Coffee Cup_final')
+
+sceneform.asset('sampledata/Paper Airplane.obj',
+        'default',
+        'sampledata/Paper Airplane.sfa',
+        'src/main/assets/Paper Airplane')
+
+sceneform.asset('sampledata/doughnut.obj',
+        'default',
+        'sampledata/doughnut.sfa',
+        'src/main/assets/doughnut')
