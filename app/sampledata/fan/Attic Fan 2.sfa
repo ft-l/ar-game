@@ -1,0 +1,50 @@
+{
+  materials: [
+    {
+      name: 'lambert4SG',
+      parameters: [
+        {
+          baseColor: 'Attic fan texture2',
+        },
+        {
+          baseColorTint: [
+            1,
+            1,
+            1,
+            1,
+          ],
+        },
+        {
+          metallic: 0,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+    ],
+    collision: {},
+    file: 'sampledata/fan/Attic Fan 2.obj',
+    name: 'Attic Fan 2',
+    recenter: 'root',
+    scale: 0.00012,
+  },
+  samplers: [
+    {
+      file: 'sampledata/fan/Attic fan texture2.png',
+      name: 'Attic fan texture2',
+      pipeline_name: 'Attic fan texture2.png',
+    },
+  ],
+  version: '0.54:2',
+}

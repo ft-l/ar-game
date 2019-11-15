@@ -41,32 +41,33 @@ dependencies {
     implementation 'com.google.ar.sceneform:core:1.13.0'
 }
 
-sceneform.asset('sampledata/tree01.obj',
-        'default',
-        'sampledata/tree01.sfa',
-        'src/main/assets/tree01')
 
-sceneform.asset('sampledata/Attic Fan 2.obj',
+sceneform.asset('sampledata/coffee-cup/Coffee Cup_final.obj',
         'default',
-        'sampledata/Attic Fan 2.sfa',
-        'src/main/assets/Attic Fan 2')
-
-sceneform.asset('sampledata/Knife_01.obj',
-        'default',
-        'sampledata/Knife_01.sfa',
-        'src/main/assets/Knife_01')
-
-sceneform.asset('sampledata/Coffee Cup_final.obj',
-        'default',
-        'sampledata/Coffee Cup_final.sfa',
+        'sampledata/coffee-cup/Coffee Cup_final.sfa',
         'src/main/assets/Coffee Cup_final')
 
-sceneform.asset('sampledata/Paper Airplane.obj',
+sceneform.asset('sampledata/doughnut/doughnut.obj',
         'default',
-        'sampledata/Paper Airplane.sfa',
+        'sampledata/doughnut/doughnut.sfa',
+        'src/main/assets/doughnut')
+
+sceneform.asset('sampledata/fan/Attic Fan 2.obj',
+        'default',
+        'sampledata/fan/Attic Fan 2.sfa',
+        'src/main/assets/Attic Fan 2')
+
+sceneform.asset('sampledata/knife/Knife_01.obj',
+        'default',
+        'sampledata/knife/Knife_01.sfa',
+        'src/main/assets/Knife_01')
+
+sceneform.asset('sampledata/paper-airplane/Paper Airplane.obj',
+        'default',
+        'sampledata/paper-airplane/Paper Airplane.sfa',
         'src/main/assets/Paper Airplane')
 
-sceneform.asset('sampledata/doughnut.obj',
+sceneform.asset('sampledata/tree/tree01.obj',
         'default',
-        'sampledata/doughnut.sfa',
-        'src/main/assets/doughnut')
+        'sampledata/tree/tree01.sfa',
+        'src/main/assets/tree01')
