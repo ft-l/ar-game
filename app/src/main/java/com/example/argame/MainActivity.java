@@ -17,14 +17,18 @@ import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
 import com.google.ar.core.Pose;
 import com.google.ar.sceneform.AnchorNode;
-import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Node;
+import com.google.ar.sceneform.collision.Box;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
+import com.google.ar.sceneform.rendering.Color;
+import com.google.ar.sceneform.rendering.Material;
+import com.google.ar.sceneform.rendering.MaterialFactory;
 import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.rendering.Renderable;
+import com.google.ar.sceneform.rendering.ShapeFactory;
 
-import java.util.Arrays;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -53,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
     private PlayerBall ball = null;
 
+    private static Material transparent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,9 +71,9 @@ public class MainActivity extends AppCompatActivity {
 
         AR_FRAGMENT = (MyArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
 
-        ArSceneView view = AR_FRAGMENT.getArSceneView();
-
-        // Scene scene = view.getScene();
+        MaterialFactory.makeTransparentWithColor(this, new Color(0.8f, 0.8f, 0.8f, 0.5f))
+                .thenAccept(
+                        material -> transparent = material);
 
         for (int i = 0; i < renderables.length; i++) {
             int finalI = i;
@@ -100,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         ball = new PlayerBall(hitResult, AR_FRAGMENT, this, 0.03f, bounds);
                         Log.i(TAG, "plane polygon: " + plane.getPolygon());
-                        int numOfRenderablesToPlace = random.nextInt(10) + 20;
+                        int numOfRenderablesToPlace = random.nextInt(5) + 5;
                         for (int i = 0; i < numOfRenderablesToPlace; i++) {
                             placeRenderableInRandomPosition(plane, renderables[random.nextInt(renderables.length)], AR_FRAGMENT, bounds);
                         }
@@ -117,8 +123,7 @@ public class MainActivity extends AppCompatActivity {
                     } else if (marker2 == null) {
                         marker2 = new BoundsMarker(hitResult, AR_FRAGMENT, this, marker1);
                     }
-                }
-        );
+                });
 
         AR_FRAGMENT.setOnFlingListener(
                 (float velocityX, float velocityY) -> {
@@ -127,9 +132,7 @@ public class MainActivity extends AppCompatActivity {
                                 getVerticalRotation(
                                         initialCameraQuaternion,
                                         AR_FRAGMENT.getArSceneView().getScene().getCamera().getWorldRotation())));
-                    }
-                }
-        );
+                    } });
 
         initialCameraQuaternion = AR_FRAGMENT.getArSceneView().getScene().getCamera().getWorldRotation();
 
@@ -170,6 +173,14 @@ public class MainActivity extends AppCompatActivity {
 
         Node node = new Node();
         node.setRenderable(renderable);
+
+        Node boundsNode = new Node();
+        boundsNode.setParent(node);
+        Box box = (Box) node.getCollisionShape();
+        Renderable boundsRenderable = ShapeFactory.makeCube(box.getSize(), box.getCenter(), transparent);
+        boundsRenderable.setCollisionShape(null);
+        boundsNode.setRenderable(boundsRenderable);
+
         AnchorNode anchorNode = new AnchorNode(anchor);
         anchorNode.addChild(node);
         anchorNode.setParent(arFragment.getArSceneView().getScene());
