@@ -18,6 +18,8 @@ import com.google.ar.sceneform.rendering.MaterialFactory;
 import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.rendering.ShapeFactory;
 
+import java.util.ArrayList;
+
 public class PlayerBall {
     private static final String TAG = PlayerBall.class.getSimpleName();
     private static final float ROTATION_ADJUSTMENT = 0.4f;
@@ -36,7 +38,6 @@ public class PlayerBall {
      */
     private float[] bounds;
 
-//    private Renderable cubeModel;
     private int rotations = 0;
 
     private float radius;
@@ -65,11 +66,6 @@ public class PlayerBall {
                     playerBall.setRenderable(ballModel);
                 }
             );
-
-//        MaterialFactory.makeOpaqueWithColor(context, new Color(android.graphics.Color.GREEN))
-//            .thenAccept(
-//                material -> cubeModel = ShapeFactory.makeCube(new Vector3(0.1f,0.1f,0.1f), new Vector3(0,0,0), material)
-//            );
 
         this.anchorNode = anchorNode;
         ball = playerBall;
@@ -101,8 +97,16 @@ public class PlayerBall {
             Log.e(TAG, e.getLocalizedMessage());
         }
 
-        for (Node node: parentFragment.getArSceneView().getScene().overlapTestAll(ball)) {
-            if (!node.getParent().equals(ball)) {
+        // ball.setCollisionShape(new Sphere(radius/(velocity.length()*0.5f)));
+
+        ArrayList<Node> collisions = parentFragment.getArSceneView().getScene().overlapTestAll(ball);
+
+        for (Node node : ball.getChildren()) {
+            collisions.addAll(parentFragment.getArSceneView().getScene().overlapTestAll(node));
+        }
+
+        for (Node node: collisions) {
+            if (!node.getParent().equals(ball) && !node.equals(ball)) {
                 Vector3 relativePosition = Quaternion.rotateVector(ball.getWorldRotation().inverted(),
                                                         Vector3.subtract(node.getWorldPosition(),ball.getWorldPosition()));
                 Quaternion relativeRotation = Quaternion.multiply(ball.getWorldRotation().inverted(),
