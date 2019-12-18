@@ -1,16 +1,16 @@
 {
   materials: [
     {
-      name: 'White',
+      name: 'color_undefined',
       parameters: [
         {
           baseColor: null,
         },
         {
           baseColorTint: [
-            1,
-            1,
-            1,
+            0.59999999999999998,
+            0.59999999999999998,
+            0.59999999999999998,
             1,
           ],
         },
@@ -30,14 +30,13 @@
   model: {
     attributes: [
       'Position',
-      'TexCoord',
       'Orientation',
     ],
     collision: {},
-    file: 'sampledata/paper-airplane/Paper Airplane.obj',
-    name: 'Paper Airplane',
+    file: 'sampledata/paper-airplane-wing/paper-airplane-wing-left.obj',
+    name: 'paper-airplane-wing-left',
     recenter: 'root',
-    scale: 0.001,
+    scale: 0.01,
   },
   version: '0.54:2',
 }

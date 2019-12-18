@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
+import com.example.argame.gamepieces.PaperAirplane;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
@@ -44,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
             "Attic Fan 2.sfb",
             "Knife_01.sfb",
             "Coffee Cup_final.sfb",
-            "Paper Airplane.sfb",
             "doughnut.sfb",
+            "paper-airplane-wing-left.sfb"
     };
     private ModelRenderable[] renderables = new ModelRenderable[renderableSources.length];
 
@@ -89,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
                                 return null;
                             });
         }
+
+        PaperAirplane.WING = renderables[5];
 
         AR_FRAGMENT.setOnSingleTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
@@ -170,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
         Anchor anchor = arFragment.getArSceneView().getSession().createAnchor(
                 new Pose(randomTranslation, plane.getCenterPose().getRotationQuaternion())
         );
+        AnchorNode anchorNode = new AnchorNode(anchor);
 
         Node node = new Node();
         node.setRenderable(renderable);
@@ -179,9 +183,8 @@ public class MainActivity extends AppCompatActivity {
         Box box = (Box) node.getCollisionShape();
         Renderable boundsRenderable = ShapeFactory.makeCube(box.getSize(), box.getCenter(), transparent);
         boundsRenderable.setCollisionShape(null);
-        boundsNode.setRenderable(boundsRenderable);
+        //boundsNode.setRenderable(boundsRenderable);
 
-        AnchorNode anchorNode = new AnchorNode(anchor);
         anchorNode.addChild(node);
         anchorNode.setParent(arFragment.getArSceneView().getScene());
     }

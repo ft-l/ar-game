@@ -62,12 +62,12 @@ sceneform.asset('sampledata/knife/Knife_01.obj',
         'sampledata/knife/Knife_01.sfa',
         'src/main/assets/Knife_01')
 
-sceneform.asset('sampledata/paper-airplane/Paper Airplane.obj',
-        'default',
-        'sampledata/paper-airplane/Paper Airplane.sfa',
-        'src/main/assets/Paper Airplane')
-
 sceneform.asset('sampledata/tree/tree01.obj',
         'default',
         'sampledata/tree/tree01.sfa',
         'src/main/assets/tree01')
+
+sceneform.asset('sampledata/paper-airplane-wing-left/paper-airplane-wing-left.obj',
+        'default',
+        'sampledata/paper-airplane-wing-left/paper-airplane-wing-left.sfa',
+        'src/main/assets/paper-airplane-wing-left')
