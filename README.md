@@ -11,3 +11,11 @@ AR-Game was my highschool senior independent study project, inspired by the ques
 ### Setup
 
 (Work in progress)
+
+### Issues
+
+Sceneform library is no longer supported by Google
+
+## To-Do
+
+Update the design to reflect the dropping of Sceneform by Google ARCore
